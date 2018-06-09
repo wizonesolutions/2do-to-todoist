@@ -1,0 +1,22 @@
+{
+    "name": "wizonesolutions/2do-to-todoist",
+    "description": "Read a 2Do export CSV and import it into Todoist using the REST API.",
+    "require": {
+        "php": "^7.0",
+        "fabian-beiner/todoist-php-api-library": "^0.7.2",
+        "symfony/yaml": "^4.1",
+        "league/csv": "^9.1"
+    },
+    "license": "AGPLv3+",
+    "autoload": {
+        "psr-4": {
+            "WizOneSolutions\\TwoDoToTodoist\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Kevin Kaland",
+            "email": "kevin@wizonesolutions.com"
+        }
+    ]
+}
