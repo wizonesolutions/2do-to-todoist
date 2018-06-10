@@ -74,6 +74,13 @@ final class Task
     protected $priority;
 
     /**
+     * @var bool
+     *
+     * Records whether the task was negative priority.
+     */
+    protected $_isNegativePriority;
+
+    /**
      * @var string
      *
      * Human defined task due date (ex.: “next Monday”, “Tomorrow”). Value is set using local (not UTC) time.
@@ -101,6 +108,13 @@ final class Task
      */
     protected $due_lang;
 
+    /**
+     * @var string
+     *
+     * The note attached to the original 2Do task.
+     */
+    protected $_note;
+
     public function __construct(array $values)
     {
         // @todo: Validation.
@@ -111,12 +125,19 @@ final class Task
 
             $this->{$key} = $value;
         }
+
+        // Ensure all keys exist (to reduce accessor errors).
+        foreach ($this->keys() as $key) {
+            if (!isset($this->{$key})) {
+                $this->{$key} = NULL;
+            }
+        }
     }
 
     public function toArray() {
         $array = [];
         foreach ($this->keys() as $key) {
-            $array->{$key} = $this->{$key};
+            $array[$key] = $this->{$key};
         }
 
         return $array;
@@ -132,10 +153,12 @@ final class Task
             'order',
             '_labelNames',
             'priority',
+            '_isNegativePriority',
             'due_string',
             'due_date',
             'due_datetime',
             'due_lang',
+            '_note',
         ];
     }
 

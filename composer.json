@@ -5,7 +5,8 @@
         "php": "^7.0",
         "fabian-beiner/todoist-php-api-library": "^0.7.2",
         "symfony/yaml": "^4.1",
-        "league/csv": "^9.1"
+        "league/csv": "^9.1",
+        "nesbot/carbon": "^1.29"
     },
     "license": "AGPLv3+",
     "autoload": {

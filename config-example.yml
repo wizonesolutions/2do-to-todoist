@@ -1,6 +1,15 @@
+### Copy this file to config.yml before using the importer.
+
+# Your Todoist API key. You can find this at Settings -> Integrations at the bottom.
+api_token: replace_with_your_token
+
 # If you do not actually want to import yet and just want to see the JSON that would be used,
 # set this to true.
 simulate: false
+
+# Disable the use of Premium features. Useful if you don't have Premium. This will stop the tool
+# from using labels and comments, meaning you will lose tag and start date information.
+premium: true
 
 # Provide a keyed list of 2Do list to Todoist project mappings. Use names. Todoist project IDs are
 # not supported. If you have projects named the same thing, maybe just make a new project
@@ -18,10 +27,6 @@ ignore_lists:
 
 # Set to true to not convert tags to labels. Useful if you don't have Premium.
 ignore_tags: false
-
-# Disable the use of Premium features. Useful if you don't have Premium. This will stop the tool
-# from using labels and comments, meaning you will lose tag and start date information.
-premium: true
 
 
 # Testing settings
