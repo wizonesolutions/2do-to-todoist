@@ -24,12 +24,18 @@ class Importer
 
         // Cache projects and labels upfront to reduce the number of round trips.
         $projects = $api->getAllProjects();
+        if (!$projects) {
+            throw new TodoistException("Failed to get all projects.");
+        }
         $projects_by_id = self::indexProjectsById($projects);
         $project_names = self::mapProjectIdsToNames($projects);
 
         $labels = $api->getAllLabels();
-        $labels_by_id = self::indexLabelsById($projects);
-        $label_names = self::mapLabelIdsToNames($projects);
+        if (!$labels) {
+            throw new TodoistException("Failed to get all labels.");
+        }
+        $labels_by_id = self::indexLabelsById($labels);
+        $label_names = self::mapLabelIdsToNames($labels);
 
         // TODO: Don't forget about simulate
         foreach ($tasks as $task) {
@@ -91,8 +97,7 @@ class Importer
             unset($api_task['_projectName'], $api_task['_subProjectName']);
 
             if ($api_task['_duration'] instanceof \DateInterval) {
-                $api_task['_labelNames'][] = 'duration_' . str_replace(' ', '_',
-                        CarbonInterval::instance($api_task['_duration'])->forHumans(true));
+                $api_task['_labelNames'][] = self::normalizeLabel('duration_' . CarbonInterval::instance($api_task['_duration'])->forHumans(true));
             }
             unset($api_task['_duration']);
 
@@ -105,7 +110,8 @@ class Importer
             $task_label_names = $api_task['_labelNames'];
 
             $label_ids = [];
-            foreach ($task_label_names as $label_name) {
+            foreach ($task_label_names as $raw_label_name) {
+                $label_name = self::normalizeLabel($raw_label_name);
                 $label_id = array_search($label_name, $label_names);
                 if (empty($config['simulate']) && !$label_id) {
                     if (!$new_label = $api->createLabel($label_name)) {
@@ -171,7 +177,7 @@ class Importer
      * @param array $projects
      * @return array
      */
-    protected static function indexProjectsById(array $projects)
+    protected static function indexProjectsById(array $projects): array
     {
         $by_id = [];
         foreach ($projects as $project) {
@@ -184,7 +190,7 @@ class Importer
      * @param array $projects
      * @return array
      */
-    protected static function mapProjectIdsToNames(array $projects)
+    protected static function mapProjectIdsToNames(array $projects): array
     {
         $mapped = [];
         foreach ($projects as $project) {
@@ -197,7 +203,7 @@ class Importer
      * @param array $labels
      * @return array
      */
-    protected static function indexLabelsById(array $labels)
+    protected static function indexLabelsById(array $labels) : array
     {
         $by_id = [];
         foreach ($labels as $label) {
@@ -210,13 +216,22 @@ class Importer
      * @param array $labels
      * @return array
      */
-    protected static function mapLabelIdsToNames(array $labels)
+    protected static function mapLabelIdsToNames(array $labels) : array
     {
         $mapped = [];
         foreach ($labels as $label) {
             $mapped[$label->id] = $label->name;
         }
         return $mapped;
+    }
+
+    /**
+     * @param $label
+     * @return string
+     */
+    protected static function normalizeLabel($label): string
+    {
+        return str_replace(' ', '_', $label);
     }
 
 }

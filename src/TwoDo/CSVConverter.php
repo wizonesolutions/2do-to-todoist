@@ -12,9 +12,8 @@ class CSVConverter
      * Turn the 2Do CSV into a Todoist-friendly format.
      *
      * @param \League\Csv\Reader $csv
-     *
+     * @param array $config
      * @return \WizOneSolutions\TwoDoToTodoist\Task[]
-     * @throws \Exception
      * @throws \League\Csv\Exception
      */
     public static function parse(\League\Csv\Reader $csv, array $config = [])
@@ -104,7 +103,8 @@ class CSVConverter
 
             // Also use labels for Location and Starred.
             if ($record[' LOCATION']) {
-                $values['_labelNames'][] = str_replace(' ', '_', $record[' LOCATION']);
+                $location = $record[' LOCATION'];
+                $values['_labelNames'][] = self::normalizeLabel($location);
             }
             if ($record[' STAR']) {
                 $values['_labelNames'][] = 'starred';
@@ -114,6 +114,15 @@ class CSVConverter
         }
 
         return $tasks;
+    }
+
+    /**
+     * @param $label
+     * @return string
+     */
+    protected static function normalizeLabel($label): string
+    {
+        return str_replace(' ', '_', $label);
     }
 
 }
